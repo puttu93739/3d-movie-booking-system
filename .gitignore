@@ -4,3 +4,37 @@ __pycache__/
 .idea/
 .env
 *.pyc
+.env.test
+
+
+
+
+# Python virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# PyCharm
+.idea/
+
+# Test and coverage reports
+report.html
+htmlcov/
+.coverage
+coverage.xml
+
+# Logs
+*.log
+
+# Operating system
+.DS_Store
+Thumbs.db
