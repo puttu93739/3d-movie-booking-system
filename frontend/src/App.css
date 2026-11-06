@@ -1,0 +1,283 @@
+
+#root {
+  min-height: 100vh;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 7%;
+  background: #10131d;
+  border-bottom: 1px solid #293042;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fbbf24;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.nav-links {
+  display: flex;
+  gap: 25px;
+}
+
+.nav-links a {
+  color: #cbd5e1;
+  text-decoration: none;
+}
+
+.nav-links a.active {
+  color: #fbbf24;
+}
+
+.nav-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fbbf24;
+}
+
+.hero {
+  min-height: 380px;
+  padding: 80px 7%;
+  background:
+    radial-gradient(ellipse at 80% 20%, #4c1d95, transparent 45%),
+    linear-gradient(120deg, #15192a, #090b12);
+}
+
+.eyebrow {
+  color: #fbbf24;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.hero h1 {
+  margin: 20px 0;
+  font-size: clamp(38px, 6vw, 65px);
+  line-height: 1.1;
+}
+
+.hero h1 span {
+  color: #fbbf24;
+}
+
+.hero p {
+  max-width: 560px;
+  color: #b0b8c9;
+  line-height: 1.7;
+}
+
+.hero-button,
+.book-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 13px 20px;
+  background: #fbbf24;
+  color: #111827;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.hero-button {
+  margin-top: 20px;
+}
+
+.movies-section,
+.content-page {
+  padding: 55px 7%;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.section-heading h2 {
+  font-size: 32px;
+}
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 24px;
+}
+
+.movie-card {
+  background: #171b28;
+  border: 1px solid #303749;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.movie-poster {
+  min-height: 270px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 25px;
+  text-align: center;
+}
+
+.poster-title {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.movie-info {
+  padding: 20px;
+}
+
+.movie-meta {
+  display: flex;
+  gap: 10px;
+  color: #fbbf24;
+  font-size: 12px;
+}
+
+.movie-info h3 {
+  font-size: 20px;
+}
+
+.duration {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #9ca3af;
+}
+
+.book-button {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.back-link {
+  color: #fbbf24;
+}
+
+.details-header {
+  padding: 35px;
+  background: linear-gradient(120deg, #28204b, #171b28);
+  border-radius: 18px;
+}
+
+.details-header h1 {
+  font-size: 42px;
+}
+
+.date-selector,
+.showtime-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.date-button,
+.showtime-option {
+  padding: 15px;
+  background: #171b28;
+  border: 1px solid #475569;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+}
+
+.date-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.date-button.selected {
+  background: #fbbf24;
+  color: #111827;
+}
+
+.booking-section {
+  margin-top: 40px;
+}
+
+.theater-list {
+  display: grid;
+  gap: 20px;
+}
+
+.theater-card {
+  padding: 25px;
+  background: #171b28;
+  border: 1px solid #303749;
+  border-radius: 16px;
+}
+
+.theater-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.theater-location,
+.screen-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #9ca3af;
+}
+
+.showtime-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 150px;
+  text-decoration: none;
+}
+
+.showtime-option:hover {
+  border-color: #fbbf24;
+}
+
+.show-price {
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.empty-showtimes,
+.seat-placeholder {
+  padding: 30px;
+  background: #171b28;
+  border-radius: 16px;
+}
+
+.error {
+  color: #fb7185;
+}
+
+@media (max-width: 650px) {
+  .navbar {
+    padding: 18px 5%;
+    flex-wrap: wrap;
+  }
+
+  .nav-tag {
+    display: none;
+  }
+
+  .hero,
+  .movies-section,
+  .content-page {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+}

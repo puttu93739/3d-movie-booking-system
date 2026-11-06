@@ -39,3 +39,19 @@ def health_check():
         "status": "healthy",
         "service": "movie-booking-api"
     }
+
+
+from fastapi.middleware.cors import CORSMiddleware
+
+# Keep your existing FastAPI app, routers and configuration.
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["*"],
+)
