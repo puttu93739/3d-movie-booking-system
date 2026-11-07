@@ -1,78 +1,186 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getShows } from "../services/api";
-import { asList, formatPrice } from "../utils/showtimes";
+
+import {
+  getShowById,
+  getMovie,
+  getSeatsByScreen,
+} from "../services/api";
+
+import SeatGrid from "../components/SeatGrid";
+import BookingSummary from "../components/BookingSummary";
+
+import {
+  normalizeSeats,
+  getSeatLabel,
+} from "../utils/seats";
 
 export default function SeatSelectionPage() {
   const { showId } = useParams();
+
   const [show, setShow] = useState(null);
+  const [movie, setMovie] = useState(null);
+  const [seats, setSeats] = useState([]);
+
+  const [selectedSeatIds, setSelectedSeatIds] =
+    useState([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
 
-    async function loadShow() {
-      try {
-        const shows = asList(await getShows());
-        const selectedShow = shows.find(
-          (item) => Number(item.id) === Number(showId)
-        );
+    async function loadSeatData() {
+      setLoading(true);
+      setError("");
+      setSelectedSeatIds([]);
+      setShow(null);
+      setMovie(null);
+      setSeats([]);
 
-        if (active) {
-          setShow(selectedShow || null);
-        }
+      try {
+        // Step 1: Retrieve the selected show.
+        const showData = await getShowById(showId);
+
+        // Step 2: Retrieve movie and screen seats.
+        const [movieData, seatData] = await Promise.all([
+          getMovie(showData.movie_id),
+          getSeatsByScreen(showData.screen_id),
+        ]);
+
+        if (!active) return;
+
+        setShow(showData);
+        setMovie(movieData);
+        setSeats(normalizeSeats(seatData));
       } catch (err) {
-        if (active) setError("Unable to load show details.");
+        if (!active) return;
+
+        console.error("Seat loading failed:", err);
+
+        setError(
+          err.response?.status === 404
+            ? "Showtime or screen not found."
+            : "Unable to load seats. Please check FastAPI."
+        );
       } finally {
-        if (active) setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
-    loadShow();
+    loadSeatData();
 
     return () => {
       active = false;
     };
   }, [showId]);
 
+  const selectedSeats = useMemo(
+    () =>
+      seats.filter((seat) =>
+        selectedSeatIds.includes(seat.id)
+      ),
+    [seats, selectedSeatIds]
+  );
+
+  function toggleSeat(seatId) {
+    setSelectedSeatIds((previous) => {
+      if (previous.includes(seatId)) {
+        return previous.filter((id) => id !== seatId);
+      }
+
+      // Optional development limit: 8 seats per selection.
+      if (previous.length >= 8) {
+        return previous;
+      }
+
+      return [...previous, seatId];
+    });
+  }
+
+  function clearSelection() {
+    setSelectedSeatIds([]);
+  }
+
+  if (loading) {
+    return (
+      <main className="content-page">
+        <p>Loading cinema seating layout...</p>
+      </main>
+    );
+  }
+
+  if (error || !show) {
+    return (
+      <main className="content-page">
+        <p className="error">
+          {error || "Showtime not found."}
+        </p>
+
+        <Link to="/" className="back-link">
+          ← Back to movies
+        </Link>
+      </main>
+    );
+  }
+
   return (
-    <main className="content-page">
-      <Link to="/" className="back-link">
-        ← Back to movies
+    <main className="content-page seat-selection-page">
+      <Link
+        to={`/movies/${show.movie_id}`}
+        className="back-link"
+      >
+        ← Back to showtimes
       </Link>
 
-      <span className="eyebrow">STAGE 2.4</span>
-      <h1>Choose your seats</h1>
+      <div className="seat-page-header">
+        <span className="eyebrow">CHOOSE YOUR SEATS</span>
 
-      {loading && <p>Loading show details...</p>}
+        <h1>{movie?.title || "Movie"}</h1>
 
-      {error && <p className="error">{error}</p>}
+        <p>
+          {new Date(show.start_time).toLocaleString(
+            "en-IN",
+            {
+              dateStyle: "full",
+              timeStyle: "short",
+            }
+          )}
+        </p>
 
-      {!loading && !error && !show && (
-        <p>Showtime not found.</p>
-      )}
+        <p>Screen #{show.screen_id}</p>
+      </div>
 
-      {show && (
-        <div className="seat-placeholder">
-          <h2>Selected show #{show.id}</h2>
-          <p>
-            Showtime:{" "}
-            {new Date(show.start_time).toLocaleString("en-IN")}
-          </p>
-          <p>Screen ID: {show.screen_id}</p>
-          <p>Ticket price: {formatPrice(show.ticket_price)}</p>
+      <div className="seat-booking-layout">
+        <div>
+          <SeatGrid
+            seats={seats}
+            selectedSeatIds={selectedSeatIds}
+            onToggleSeat={toggleSeat}
+          />
 
-          <div className="cinema-screen-preview">
-            CINEMA SCREEN
-          </div>
-
-          <p>
-            Interactive 2D and 3D seat selection will
-            be implemented in Stage 2.4 and 2.5.
+          <p className="seat-help-text">
+            Click a seat to select it. Click again to
+            deselect. Maximum 8 seats per selection.
           </p>
         </div>
+
+        <BookingSummary
+          selectedSeats={selectedSeats}
+          ticketPrice={show.ticket_price}
+          onClear={clearSelection}
+        />
+      </div>
+
+      {selectedSeats.length > 0 && (
+        <p className="seat-selection-note">
+          Selected:{" "}
+          {selectedSeats.map(getSeatLabel).join(", ")}
+        </p>
       )}
     </main>
   );

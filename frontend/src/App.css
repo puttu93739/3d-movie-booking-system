@@ -281,3 +281,274 @@
     padding-right: 5%;
   }
 }
+
+/* ==========================================
+   PHASE 2.4 — CINEMA SEAT SELECTION
+   ========================================== */
+
+.seat-selection-page {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.seat-page-header {
+  margin: 25px 0 35px;
+}
+
+.seat-page-header h1 {
+  font-size: clamp(30px, 4vw, 46px);
+  margin: 12px 0;
+}
+
+.seat-page-header p {
+  color: #aeb7c9;
+  margin: 8px 0;
+}
+
+.seat-booking-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  gap: 28px;
+  align-items: start;
+}
+
+.seat-grid-panel {
+  background: #171b28;
+  border: 1px solid #303749;
+  border-radius: 20px;
+  padding: 35px 20px;
+}
+
+.screen-container {
+  max-width: 650px;
+  margin: 0 auto 55px;
+  text-align: center;
+}
+
+.cinema-screen {
+  height: 55px;
+  border-top: 6px solid #fbbf24;
+  border-radius: 50% 50% 0 0;
+  background: linear-gradient(
+    180deg,
+    rgba(251, 191, 36, 0.20),
+    transparent
+  );
+  box-shadow: 0 -8px 28px rgba(251, 191, 36, 0.09);
+}
+
+.screen-container span {
+  color: #94a3b8;
+  font-size: 11px;
+  letter-spacing: 3px;
+}
+
+.seat-map-scroll {
+  overflow-x: auto;
+  padding: 12px 0 25px;
+}
+
+.seat-map {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+  width: max-content;
+  min-width: 100%;
+}
+
+.seat-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.seat-row-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.row-label {
+  width: 24px;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.cinema-seat {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid #34d399;
+  border-radius: 8px 8px 5px 5px;
+  background: rgba(16, 185, 129, 0.13);
+  color: #a7f3d0;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.cinema-seat:hover {
+  transform: translateY(-3px);
+  background: rgba(16, 185, 129, 0.35);
+}
+
+.cinema-seat--selected,
+.cinema-seat--selected:hover {
+  background: #fbbf24;
+  border-color: #fbbf24;
+  color: #111827;
+}
+
+.cinema-seat:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 3px;
+}
+
+.seat-legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 28px;
+  margin-top: 25px;
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+.seat-legend > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.legend-seat {
+  width: 19px;
+  height: 19px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.legend-available {
+  background: rgba(16, 185, 129, 0.25);
+  border: 1px solid #34d399;
+}
+
+.legend-selected {
+  background: #fbbf24;
+  border: 1px solid #fbbf24;
+}
+
+.booking-summary {
+  position: sticky;
+  top: 24px;
+  background: #171b28;
+  border: 1px solid #303749;
+  border-radius: 20px;
+  padding: 25px;
+}
+
+.booking-summary h2 {
+  margin: 0 0 26px;
+  font-size: 23px;
+}
+
+.summary-line,
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.summary-line span {
+  color: #9ca3af;
+}
+
+.selected-seat-labels {
+  padding: 15px;
+  border-radius: 10px;
+  background: #22283a;
+  color: #fbbf24;
+  font-weight: 700;
+  min-height: 48px;
+}
+
+.summary-total {
+  border-top: 1px solid #303749;
+  padding-top: 22px;
+  margin-top: 28px;
+}
+
+.summary-total strong {
+  color: #fbbf24;
+  font-size: 26px;
+}
+
+.clear-seats-button {
+  width: 100%;
+  padding: 13px;
+  background: transparent;
+  color: #fbbf24;
+  border: 1px solid #fbbf24;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.clear-seats-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.booking-disclaimer,
+.seat-help-text,
+.seat-selection-note {
+  color: #94a3b8;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.seat-help-text {
+  text-align: center;
+  margin-top: 18px;
+}
+
+.seat-selection-note {
+  margin-top: 20px;
+}
+
+@media (max-width: 950px) {
+  .seat-booking-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-summary {
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  .seat-grid-panel {
+    padding: 25px 12px;
+  }
+
+  .cinema-seat {
+    width: 30px;
+    height: 30px;
+  }
+
+  .seat-row-buttons {
+    gap: 5px;
+  }
+}

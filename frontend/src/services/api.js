@@ -42,4 +42,17 @@ export async function getSeats(screenId) {
   return response.data;
 }
 
+
+export async function getShowById(showId) {
+  const response = await api.get(`/shows/${showId}`);
+  return response.data;
+}
+
+export async function getSeatsByScreen(screenId) {
+  const response = await api.get(
+    `/screens/${screenId}/seats`
+  );
+  return response.data;
+}
+
 export default api;
