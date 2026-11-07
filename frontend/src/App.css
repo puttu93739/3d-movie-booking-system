@@ -814,3 +814,114 @@
   }
 }
 
+
+/* Stage 2.6 — Booking and reservation */
+
+.cinema-seat--unavailable,
+.cinema-seat--unavailable:hover {
+  background: #475569;
+  border-color: #64748b;
+  color: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.7;
+}
+
+.hold-countdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 18px 22px;
+  margin: 20px 0;
+  background: #292015;
+  border: 1px solid #b45309;
+  border-radius: 14px;
+  color: #fde68a;
+}
+
+.hold-countdown strong {
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+}
+
+.booking-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.booking-primary-button,
+.booking-secondary-button {
+  width: 100%;
+  padding: 15px 20px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.booking-primary-button {
+  background: #fbbf24;
+  color: #111827;
+  border: 1px solid #f59e0b;
+}
+
+.booking-primary-button:hover:not(:disabled) {
+  background: #f59e0b;
+}
+
+.booking-secondary-button {
+  background: transparent;
+  color: #e2e8f0;
+  border: 1px solid #475569;
+}
+
+.booking-primary-button:disabled,
+.booking-secondary-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.booking-error {
+  background: #451a1a;
+  border: 1px solid #ef4444;
+  color: #fecaca;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 15px 0;
+}
+
+.booking-success {
+  padding: 22px;
+  margin: 20px 0;
+  border: 1px solid #10b981;
+  background: #12342b;
+  border-radius: 15px;
+  color: #d1fae5;
+}
+
+.booking-success h2 {
+  margin-top: 0;
+  color: #6ee7b7;
+}
+
+.refresh-availability-button {
+  display: block;
+  margin: 15px auto;
+  padding: 10px 18px;
+  background: #1e293b;
+  color: #cbd5e1;
+  border: 1px solid #475569;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.booking-primary-button:focus-visible,
+.booking-secondary-button:focus-visible,
+.refresh-availability-button:focus-visible {
+  outline: 3px solid #38bdf8;
+  outline-offset: 3px;
+}
+

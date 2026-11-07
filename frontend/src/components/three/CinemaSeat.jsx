@@ -19,14 +19,13 @@ export default function CinemaSeat({
     <group
       position={seat.position}
       rotation={[0, seat.rotationY ?? 0, 0]}
-      onClick={(event) => {
-        event.stopPropagation();
+    onClick={(event) => {
+      event.stopPropagation();
+
+      if (!unavailable) {
         onToggle(seat.id);
-      }}
-      onPointerOver={(event) => {
-        event.stopPropagation();
-        setHovered(true);
-      }}
+      }
+    }}
       onPointerOut={() => setHovered(false)}
     >
       {/* Metal pedestal */}

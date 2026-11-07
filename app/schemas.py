@@ -126,3 +126,54 @@ class ShowResponse(BaseModel):
     ticket_price: int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+from uuid import UUID
+
+
+class HoldCreate(BaseModel):
+    show_id: int = Field(gt=0)
+
+    seat_ids: list[int] = Field(
+        min_length=1,
+        max_length=8,
+    )
+
+    @field_validator("seat_ids")
+    @classmethod
+    def validate_seats(cls, values: list[int]):
+        if any(seat_id <= 0 for seat_id in values):
+            raise ValueError("Seat IDs must be positive")
+
+        if len(values) != len(set(values)):
+            raise ValueError("Duplicate seat IDs are not allowed")
+
+        return values
+
+
+class HoldResponse(BaseModel):
+    hold_id: UUID
+    show_id: int
+    seat_ids: list[int]
+    status: str
+    expires_at: datetime
+    hold_token: str
+
+
+class AvailabilityResponse(BaseModel):
+    show_id: int
+    unavailable_seat_ids: list[int]
+    server_time: datetime
+
+
+class BookingResponse(BaseModel):
+    booking_id: UUID
+    show_id: int
+    seat_ids: list[int]
+    status: str
+    confirmed_at: datetime | None = None
+
+
+class ReleaseResponse(BaseModel):
+    hold_id: UUID
+    status: str

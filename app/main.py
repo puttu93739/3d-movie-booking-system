@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from app.database import Base, engine
 from app import models
 from app.routers import movies,theaters,shows
-
+from app.routers import bookings
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -25,6 +25,7 @@ app = FastAPI(
 app.include_router(movies.router)
 app.include_router(theaters.router)
 app.include_router(shows.router)
+app.include_router(bookings.router)
 
 @app.get("/")
 def home():

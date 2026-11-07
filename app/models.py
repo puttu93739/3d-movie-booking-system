@@ -9,6 +9,8 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 
 from sqlalchemy import CheckConstraint
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
 
 class Movie(Base):
     __tablename__ = "movies"
@@ -241,5 +243,98 @@ class Show(Base):
         CheckConstraint(
             "end_time > start_time",
             name="ck_shows_valid_interval"
+        ),
+    )
+
+
+class BookingHold(Base):
+    __tablename__ = "booking_holds"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+    )
+
+    show_id: Mapped[int] = mapped_column(
+        ForeignKey("shows.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+
+    token_hash: Mapped[str] = mapped_column(
+        String(64),
+        nullable=False,
+        unique=True,
+    )
+
+    status: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="HELD",
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+    )
+
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+    )
+
+    confirmed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+
+    seats: Mapped[list["BookingHoldSeat"]] = relationship(
+        back_populates="hold",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('HELD', 'CONFIRMED', "
+            "'CANCELLED', 'EXPIRED')",
+            name="ck_booking_hold_status",
+        ),
+    )
+
+
+class BookingHoldSeat(Base):
+    __tablename__ = "booking_hold_seats"
+
+    id: Mapped[int] = mapped_column(
+        primary_key=True,
+    )
+
+    hold_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey(
+            "booking_holds.id",
+            ondelete="CASCADE",
+        ),
+        nullable=False,
+    )
+
+    seat_id: Mapped[int] = mapped_column(
+        ForeignKey("seats.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+
+    hold: Mapped["BookingHold"] = relationship(
+        back_populates="seats",
+    )
+
+    __table_args__ = (
+        UniqueConstraint(
+            "hold_id",
+            "seat_id",
+            name="uq_booking_hold_seat",
         ),
     )

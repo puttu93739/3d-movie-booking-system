@@ -55,4 +55,37 @@ export async function getSeatsByScreen(screenId) {
   return response.data;
 }
 
+export async function getSeatAvailability(showId) {
+  const response = await api.get(
+    `/bookings/shows/${showId}/availability`
+  );
+  return response.data;
+}
+
+export async function createSeatHold(showId, seatIds) {
+  const response = await api.post("/bookings/holds", {
+    show_id: Number(showId),
+    seat_ids: seatIds,
+  });
+  return response.data;
+}
+
+export async function confirmSeatHold(holdId, token) {
+  const response = await api.post(
+    `/bookings/holds/${holdId}/confirm`,
+    {},
+    { headers: { "X-Hold-Token": token } }
+  );
+  return response.data;
+}
+
+export async function releaseSeatHold(holdId, token) {
+  const response = await api.post(
+    `/bookings/holds/${holdId}/release`,
+    {},
+    { headers: { "X-Hold-Token": token } }
+  );
+  return response.data;
+}
+
 export default api;
