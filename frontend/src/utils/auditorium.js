@@ -1,12 +1,13 @@
 
 export const AUDITORIUM = {
-  seatSpacing: 1.15,
-  rowSpacing: 1.55,
-  rowRise: 0.22,
-  seatBaseHeight: 0.48,
-  aisleGap: 1.2,
-  cameraPosition: [0, 10, 18],
+  seatSpacing: 1.18,
+  rowSpacing: 1.65,
+  rowRise: 0.38,
+  seatBaseHeight: 0.62,
+  aisleGap: 1.3,
+  curveDepth: 0.025,
   maxSelectableSeats: 8,
+  screenDistance: 5.5,
 };
 
 export function getAuditoriumLayout(seats) {
@@ -15,49 +16,42 @@ export function getAuditoriumLayout(seats) {
       seats: [],
       rowCount: 0,
       maxSeatsPerRow: 0,
-      width: 12,
-      depth: 12,
+      width: 14,
+      depth: 14,
+      lastRowZ: 0,
     };
   }
 
   const rowLabels = [
-    ...new Set(seats.map((seat) => String(seat.row_label))),
+    ...new Set(
+      seats.map((seat) => String(seat.row_label))
+    ),
   ].sort((a, b) =>
     a.localeCompare(b, undefined, { numeric: true })
   );
 
-  const rowCount = rowLabels.length;
-  const rowIndexMap = new Map(
-    rowLabels.map((label, index) => [label, index])
-  );
-
-  const maxSeatsPerRow = Math.max(
-    ...rowLabels.map(
-      (label) =>
-        seats.filter(
-          (seat) => String(seat.row_label) === label
-        ).length
-    )
-  );
-
   const positionedSeats = [];
+  let maxSeatsPerRow = 0;
+  let maxAbsX = 0;
+  let lastRowZ = 0;
 
-  for (const label of rowLabels) {
-    const rowIndex = rowIndexMap.get(label);
-
+  rowLabels.forEach((label, rowIndex) => {
     const rowSeats = seats
-      .filter(
-        (seat) => String(seat.row_label) === label
-      )
+      .filter((seat) => String(seat.row_label) === label)
       .sort(
         (a, b) =>
           Number(a.seat_number) - Number(b.seat_number)
       );
 
+    maxSeatsPerRow = Math.max(
+      maxSeatsPerRow,
+      rowSeats.length
+    );
+
     const center = (rowSeats.length - 1) / 2;
 
     rowSeats.forEach((seat, index) => {
-      const middleAisleOffset =
+      const aisleOffset =
         rowSeats.length >= 6
           ? index < rowSeats.length / 2
             ? -AUDITORIUM.aisleGap / 2
@@ -66,38 +60,46 @@ export function getAuditoriumLayout(seats) {
 
       const x =
         (index - center) * AUDITORIUM.seatSpacing +
-        middleAisleOffset;
+        aisleOffset;
 
-      const z = rowIndex * AUDITORIUM.rowSpacing;
+      // Seats at the edges curve slightly toward
+      // the rear of the auditorium.
+      const curveOffset =
+        AUDITORIUM.curveDepth * x * x;
+
+      const z =
+        rowIndex * AUDITORIUM.rowSpacing +
+        curveOffset;
 
       const y =
         AUDITORIUM.seatBaseHeight +
         rowIndex * AUDITORIUM.rowRise;
 
+      maxAbsX = Math.max(maxAbsX, Math.abs(x));
+      lastRowZ = Math.max(lastRowZ, z);
+
+      // Seat faces toward the screen.
+      const rotationY = -Math.atan2(
+        x,
+        AUDITORIUM.screenDistance + z
+      );
+
       positionedSeats.push({
         ...seat,
         position: [x, y, z],
+        rotationY,
         rowIndex,
       });
     });
-  }
-
-  const width =
-    maxSeatsPerRow * AUDITORIUM.seatSpacing +
-    AUDITORIUM.aisleGap +
-    5;
-
-  const depth =
-    Math.max(1, rowCount - 1) *
-      AUDITORIUM.rowSpacing +
-    10;
+  });
 
   return {
     seats: positionedSeats,
-    rowCount,
+    rowCount: rowLabels.length,
     maxSeatsPerRow,
-    width,
-    depth,
+    width: Math.max(14, maxAbsX * 2 + 5),
+    depth: lastRowZ + AUDITORIUM.screenDistance + 5,
+    lastRowZ,
   };
 }
 

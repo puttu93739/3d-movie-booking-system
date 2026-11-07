@@ -139,3 +139,59 @@ describe("Shared seat selection", () => {
       .toEqual([1, 2, 3, 4, 5, 6, 7]);
   });
 });
+
+describe("IMAX-style auditorium geometry", () => {
+  const demoSeats = Array.from(
+    { length: 24 },
+    (_, index) => ({
+      id: index + 1,
+      row_label: ["A", "B", "C"][Math.floor(index / 8)],
+      seat_number: (index % 8) + 1,
+    })
+  );
+
+  it("curves the outer seats behind center seats", () => {
+    const layout = getAuditoriumLayout(demoSeats);
+    const firstRow = layout.seats.filter(
+      (seat) => seat.row_label === "A"
+    );
+
+    expect(firstRow[0].position[2]).toBeGreaterThan(
+      firstRow[3].position[2]
+    );
+  });
+
+  it("increases elevation for later rows", () => {
+    const layout = getAuditoriumLayout(demoSeats);
+
+    const a = layout.seats.find((s) => s.id === 1);
+    const c = layout.seats.find((s) => s.id === 17);
+
+    expect(c.position[1]).toBeGreaterThan(
+      a.position[1]
+    );
+  });
+
+  it("creates finite seat rotations", () => {
+    const layout = getAuditoriumLayout(demoSeats);
+
+    for (const seat of layout.seats) {
+      expect(Number.isFinite(seat.rotationY)).toBe(true);
+    }
+  });
+
+  it("returns valid auditorium dimensions", () => {
+    const layout = getAuditoriumLayout(demoSeats);
+
+    expect(layout.width).toBeGreaterThan(0);
+    expect(layout.depth).toBeGreaterThan(0);
+    expect(layout.lastRowZ).toBeGreaterThan(0);
+  });
+
+  it("preserves original PostgreSQL seat IDs", () => {
+    const layout = getAuditoriumLayout(demoSeats);
+
+    expect(layout.seats.map((s) => s.id).sort((a, b) => a - b))
+      .toEqual(demoSeats.map((s) => s.id));
+  });
+});

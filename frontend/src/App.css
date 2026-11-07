@@ -655,3 +655,162 @@
     flex: 1;
   }
 }
+
+
+/* ==========================================
+   STAGE 2.5 — IMAX-STYLE AUDITORIUM
+   ========================================== */
+
+.imax-viewer {
+  overflow: hidden;
+  border: 1px solid #28364c;
+  border-radius: 22px;
+  background: #090e1b;
+  box-shadow: 0 24px 65px rgba(0, 0, 0, 0.35);
+}
+
+.imax-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #111827;
+  border-bottom: 1px solid #273449;
+}
+
+.imax-toolbar-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+}
+
+.imax-status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 12px #38bdf8;
+}
+
+.imax-reset-button {
+  padding: 9px 14px;
+  border: 1px solid #475569;
+  border-radius: 9px;
+  background: #1e293b;
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.imax-reset-button:hover {
+  background: #334155;
+}
+
+.imax-reset-button:focus-visible {
+  outline: 2px solid #fbbf24;
+  outline-offset: 3px;
+}
+
+.imax-canvas-container {
+  width: 100%;
+  height: 620px;
+  position: relative;
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    #17223c 0%,
+    #080c16 75%
+  );
+}
+
+.imax-canvas-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.imax-fallback {
+  padding: 32px;
+  color: #e2e8f0;
+  text-align: center;
+}
+
+.imax-viewer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 16px 20px;
+  border-top: 1px solid #273449;
+  background: #111827;
+}
+
+.imax-viewer-footer p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.imax-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.imax-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #cbd5e1;
+  font-size: 12px;
+}
+
+.imax-legend-dot {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.imax-legend-dot.available {
+  background: #8b2337;
+  border: 1px solid #be5267;
+}
+
+.imax-legend-dot.selected {
+  background: #fbbf24;
+  border: 1px solid #f59e0b;
+}
+
+@media (max-width: 950px) {
+  .imax-canvas-container {
+    height: 500px;
+  }
+}
+
+@media (max-width: 600px) {
+  .imax-canvas-container {
+    height: 390px;
+  }
+
+  .imax-toolbar {
+    padding: 12px;
+  }
+
+  .imax-toolbar-title {
+    font-size: 10px;
+    letter-spacing: 0.7px;
+  }
+
+  .imax-viewer-footer {
+    padding: 12px;
+  }
+}
+

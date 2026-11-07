@@ -1,102 +1,191 @@
 
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
 
 import CinemaSeat from "./CinemaSeat";
 import CinemaEnvironment from "./CinemaEnvironment";
 import AuditoriumControls from "./AuditoriumControls";
 
-import { getAuditoriumLayout } from "../../utils/auditorium";
+import {
+  AUDITORIUM,
+  getAuditoriumLayout,
+} from "../../utils/auditorium";
 
 export default function CinemaAuditorium({
   seats,
   selectedSeatIds,
   onToggleSeat,
 }) {
+  const controlsRef = useRef(null);
+
   const layout = useMemo(
     () => getAuditoriumLayout(seats),
     [seats]
   );
 
+  const selectedIds = useMemo(
+    () => new Set(selectedSeatIds),
+    [selectedSeatIds]
+  );
+
   if (layout.seats.length === 0) {
     return (
       <div className="empty-showtimes">
-        No seats configured for this auditorium.
+        No seats are configured for this auditorium.
       </div>
     );
   }
 
-  const centerZ =
-    Math.max(0, layout.rowCount - 1) * 1.55 / 2;
+  const centerZ = layout.lastRowZ / 2;
 
-  const cameraDistance = Math.max(
-    18,
-    layout.width * 1.15,
-    layout.depth * 1.25
+  // Dynamically scale the camera for different screen sizes.
+  const distance = Math.max(
+    19,
+    layout.width * 1.3,
+    layout.depth * 1.1
   );
 
-  const target = [0, 1, centerZ];
+  const initialCameraPosition = [
+    distance * 0.2,
+    Math.max(9, distance * 0.65),
+    centerZ + distance,
+  ];
+
+  const target = [
+    0,
+    1.5 + layout.rowCount * AUDITORIUM.rowRise * 0.2,
+    centerZ - 0.5,
+  ];
+
+  function resetCamera() {
+    const controls = controlsRef.current;
+
+    if (!controls) return;
+
+    controls.object.position.set(
+      ...initialCameraPosition
+    );
+
+    controls.target.set(...target);
+    controls.update();
+  }
 
   return (
-    <div className="cinema-3d-wrapper">
-      <Canvas
-        shadows
-        camera={{
-          position: [
-            0,
-            cameraDistance * 0.65,
-            centerZ + cameraDistance,
-          ],
-          fov: 45,
-          near: 0.1,
-          far: 300,
-        }}
-        gl={{ antialias: true }}
-        fallback={
-          <p>
-            WebGL is unavailable in this browser.
-            Please use the 2D seat view.
-          </p>
-        }
-      >
-        <color attach="background" args={["#090b12"]} />
+    <section className="imax-viewer">
+      <div className="imax-toolbar">
+        <div className="imax-toolbar-title">
+          <span className="imax-status-dot" />
+          <span>IMAX-STYLE 3D VIEW</span>
+        </div>
 
-        <ambientLight intensity={1.2} />
-
-        <directionalLight
-          position={[5, 12, 8]}
-          intensity={2.0}
-          castShadow
-          shadow-mapSize={[1024, 1024]}
-        />
-
-        <pointLight
-          position={[0, 6, -3]}
-          intensity={35}
-          color="#fbbf24"
-          distance={22}
-        />
-
-        <Environment preset="city" />
-
-        <CinemaEnvironment layout={layout} />
-
-        {layout.seats.map((seat) => (
-          <CinemaSeat
-            key={seat.id}
-            seat={seat}
-            selected={selectedSeatIds.includes(seat.id)}
-            onToggle={onToggleSeat}
-          />
-        ))}
-
-        <AuditoriumControls target={target} />
-      </Canvas>
-
-      <div className="cinema-3d-hint">
-        Drag to rotate • Scroll to zoom • Click seats to select
+        <button
+          type="button"
+          className="imax-reset-button"
+          onClick={resetCamera}
+        >
+          Reset camera
+        </button>
       </div>
-    </div>
+
+      <div className="imax-canvas-container">
+        <Canvas
+          shadows={false}
+          dpr={[1, 1.75]}
+          camera={{
+            position: initialCameraPosition,
+            fov: 48,
+            near: 0.1,
+            far: 350,
+          }}
+          gl={{
+            antialias: true,
+            powerPreference: "high-performance",
+          }}
+          fallback={
+            <p className="imax-fallback">
+              WebGL is unavailable. Please switch to
+              the 2D seat map.
+            </p>
+          }
+        >
+          <color
+            attach="background"
+            args={["#080c16"]}
+          />
+
+          <fog
+            attach="fog"
+            args={["#080c16", 35, 95]}
+          />
+
+            {/* Base lighting for the entire auditorium */}
+            <ambientLight intensity={2.5} color="#ffffff" />
+
+            {/* Light from above */}
+            <hemisphereLight
+              args={["#ffffff", "#64748b", 2.0]}
+            />
+
+            {/* Main overhead light */}
+            <directionalLight
+              position={[0, 15, 10]}
+              intensity={4}
+              color="#ffffff"
+            />
+
+            {/* Front lighting */}
+            <directionalLight
+              position={[0, 8, -8]}
+              intensity={3}
+              color="#bfdbfe"
+            />
+
+            {/* Additional seat lighting */}
+            <pointLight
+              position={[0, 7, 5]}
+              intensity={120}
+              distance={35}
+              decay={2}
+              color="#ffffff"
+            />
+
+
+          <CinemaEnvironment layout={layout} />
+
+          {layout.seats.map((seat) => (
+            <CinemaSeat
+              key={seat.id}
+              seat={seat}
+              selected={selectedIds.has(seat.id)}
+              onToggle={onToggleSeat}
+            />
+          ))}
+
+          <AuditoriumControls
+            controlsRef={controlsRef}
+            target={target}
+            maxDistance={Math.max(60, distance * 2)}
+          />
+        </Canvas>
+      </div>
+
+      <div className="imax-viewer-footer">
+        <div className="imax-legend">
+          <span>
+            <i className="imax-legend-dot available" />
+            Available
+          </span>
+
+          <span>
+            <i className="imax-legend-dot selected" />
+            Selected
+          </span>
+        </div>
+
+        <p>
+          Drag to rotate • Scroll to zoom • Click to select
+        </p>
+      </div>
+    </section>
   );
 }
