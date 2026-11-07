@@ -552,3 +552,106 @@
     gap: 5px;
   }
 }
+
+
+
+
+/* ==========================================
+   PHASE 2.5 — 3D AUDITORIUM
+   ========================================== */
+
+.view-switcher {
+  display: inline-flex;
+  gap: 6px;
+  padding: 6px;
+  margin-bottom: 25px;
+  border: 1px solid #303749;
+  border-radius: 14px;
+  background: #171b28;
+}
+
+.view-switcher button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.view-switcher button.view-active {
+  background: #fbbf24;
+  color: #111827;
+}
+
+.view-switcher button:hover:not(.view-active) {
+  background: #293042;
+  color: white;
+}
+
+.auditorium-main {
+  min-width: 0;
+}
+
+.cinema-3d-wrapper {
+  position: relative;
+  width: 100%;
+  height: 570px;
+  overflow: hidden;
+  border: 1px solid #303749;
+  border-radius: 20px;
+  background: #090b12;
+}
+
+.cinema-3d-wrapper canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.cinema-3d-hint {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 16px;
+  border: 1px solid #334155;
+  border-radius: 25px;
+  background: rgba(15, 23, 42, 0.88);
+  color: #cbd5e1;
+  font-size: 12px;
+  text-align: center;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 950px) {
+  .cinema-3d-wrapper {
+    height: 460px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cinema-3d-wrapper {
+    height: 380px;
+  }
+
+  .cinema-3d-hint {
+    bottom: 10px;
+    max-width: 90%;
+    white-space: normal;
+    font-size: 11px;
+  }
+
+  .view-switcher {
+    display: flex;
+    width: 100%;
+  }
+
+  .view-switcher button {
+    flex: 1;
+  }
+}
