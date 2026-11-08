@@ -1,6 +1,7 @@
 
 import { Link, NavLink } from "react-router-dom";
 import { Clapperboard, Ticket } from "lucide-react";
+import AccountLinks from "./AccountLinks";
 
 export default function Navbar() {
   return (

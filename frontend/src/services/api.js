@@ -4,8 +4,9 @@ import axios from "axios";
 const api = axios.create({
   baseURL:
     import.meta.env.VITE_API_BASE_URL ||
-    "http://127.0.0.1:8000",
+    "http://localhost:8000",
   timeout: 10000,
+  withCredentials: true,
 });
 
 export async function getMovies() {
@@ -87,5 +88,31 @@ export async function releaseSeatHold(holdId, token) {
   );
   return response.data;
 }
+
+export async function registerUser(data) {
+  const response = await api.post("/auth/register", data);
+  return response.data;
+}
+
+export async function loginUser(data) {
+  const response = await api.post("/auth/login", data);
+  return response.data;
+}
+
+export async function getCurrentUser() {
+  const response = await api.get("/auth/me");
+  return response.data;
+}
+
+export async function refreshSession() {
+  const response = await api.post("/auth/refresh");
+  return response.data;
+}
+
+export async function logoutUser() {
+  const response = await api.post("/auth/logout");
+  return response.data;
+}
+
 
 export default api;

@@ -1,7 +1,10 @@
 
-from pydantic import BaseModel, ConfigDict, Field
+# from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
-from pydantic import field_validator
+
+from uuid import UUID
+
+from pydantic import BaseModel, EmailStr, Field, field_validator,ConfigDict
 
 class MovieBase(BaseModel):
     title: str = Field(min_length=1, max_length=150)
@@ -177,3 +180,34 @@ class BookingResponse(BaseModel):
 class ReleaseResponse(BaseModel):
     hold_id: UUID
     status: str
+
+class RegisterRequest(BaseModel):
+    email: EmailStr
+    full_name: str = Field(min_length=2, max_length=120)
+    password: str = Field(min_length=12, max_length=128)
+
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, value: str):
+        if not value.strip():
+            raise ValueError("Password cannot be blank")
+        return value
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class UserResponse(BaseModel):
+    id: UUID
+    email: EmailStr
+    full_name: str
+    is_active: bool
+
+    model_config = {"from_attributes": True}
+
+
+class AuthResponse(BaseModel):
+    user: UserResponse
+    message: str

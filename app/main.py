@@ -6,7 +6,8 @@ from fastapi import FastAPI
 from app.database import Base, engine
 from app import models
 from app.routers import movies,theaters,shows
-from app.routers import bookings
+from app.routers import bookings,auth
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -26,6 +27,7 @@ app.include_router(movies.router)
 app.include_router(theaters.router)
 app.include_router(shows.router)
 app.include_router(bookings.router)
+app.include_router(auth.router)
 
 @app.get("/")
 def home():
@@ -52,7 +54,7 @@ app.add_middleware(
         "http://localhost:5173",
         "http://127.0.0.1:5173",
     ],
-    allow_credentials=False,
+    allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
-    allow_headers=["*"],
+    allow_headers=["Content-Type", "X-CSRF-Token"],
 )
